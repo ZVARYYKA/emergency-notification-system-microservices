@@ -1,0 +1,4 @@
+rootProject.name = 'emergency-notification-system-microservices'
+
+includeBuild 'eureka-server'
+includeBuild 'api-gateway'
