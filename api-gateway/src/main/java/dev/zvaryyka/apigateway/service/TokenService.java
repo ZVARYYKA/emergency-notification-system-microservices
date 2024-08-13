@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class TokenService {
@@ -17,8 +16,7 @@ public class TokenService {
     private String clientId;
     @Value("${keycloak.clientSecret}")
     private String clientSecret;
-    @Value("${keycloak.tokenUrl}")
-    private String tokenUrl;
+
 
     private final TokenClient tokenClient;
 
