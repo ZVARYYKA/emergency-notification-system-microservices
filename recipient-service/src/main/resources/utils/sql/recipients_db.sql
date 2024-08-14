@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE recipients
 (
     id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    keycloak_user_id VARCHAR(255) NOT NULL UNIQUE,
+    keycloak_user_id VARCHAR(255) NOT NULL ,
     name             VARCHAR(255) NOT NULL,
     email            VARCHAR(255) NOT NULL UNIQUE,
     phone_number     VARCHAR(20),

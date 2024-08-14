@@ -20,8 +20,10 @@ public class RegistrationService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    @Value("${keycloak.clientId}")
-    private String clientId;
+    @Value("${keycloak.admin.realm}")
+    private String adminRealm;
+
+
 
     @Value("${keycloak.admin.clientId}")
     private String adminClientId;
@@ -41,7 +43,7 @@ public class RegistrationService {
     private Keycloak getAdminKeycloakInstance() {
         return KeycloakBuilder.builder()
                 .serverUrl("http://localhost:8080")
-                .realm("master")
+                .realm(adminRealm)
                 .clientId(adminClientId)
                 .clientSecret(clientSecret)
                 .username(adminUsername)
@@ -66,7 +68,7 @@ public class RegistrationService {
         credential.setValue(userRequest.getPassword());
         user.setCredentials(Collections.singletonList(credential));
 
-        Response response = keycloak.realm("master").users().create(user);
+        Response response = keycloak.realm(realm).users().create(user);
         System.out.println(response.getLocation());
         keycloak.close();
 
