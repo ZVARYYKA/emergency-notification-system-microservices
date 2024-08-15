@@ -1,5 +1,6 @@
 package dev.zvaryyka.recipientservice.repository;
 
+import dev.zvaryyka.recipientservice.models.Device;
 import dev.zvaryyka.recipientservice.models.Recipient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,9 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RecipientRepository  extends JpaRepository<Recipient, Long> { //TODO Replace to UUID
+public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
-    List<Recipient> findByKeycloakUserId(String keycloakUserId);
+    List<Device> findAllByRecipient(Recipient recipient);
 
-    Optional<Recipient> findById(UUID id);
 }

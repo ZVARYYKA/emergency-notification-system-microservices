@@ -1,17 +1,15 @@
 package dev.zvaryyka.recipientservice.service;
 
-import com.netflix.discovery.converters.Auto;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 import dev.zvaryyka.recipientservice.models.Recipient;
-import dev.zvaryyka.recipientservice.models.UserInfo;
+import dev.zvaryyka.recipientservice.response.UserInfo;
 import dev.zvaryyka.recipientservice.repository.RecipientRepository;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,52 +79,50 @@ public class RecipientService {
 
 
     }
-    //TODO Fix problem with csv method
     private String addNewRecipientFromCSVFile(MultipartFile file, UserInfo userInfo) {
         int count = 0;
 
-        try (InputStream inputStream = file.getInputStream();
-             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+        try (InputStreamReader reader = new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8);
+             CSVReader csvReader = new CSVReaderBuilder(reader)
+                     .withSkipLines(1)  // Skip the header line
+                     .withCSVParser(new com.opencsv.CSVParserBuilder().withSeparator(';').build())  // Use ';' as the separator
+                     .build()) {
 
-            // Чтение содержимого для удаления BOM, если он есть
-            String content = IOUtils.toString(reader);
-            StringReader stringReader = new StringReader(content);
+            // Read all lines from the CSV file
+            List<String[]> records = csvReader.readAll();
 
-            // Создание парсера CSV с исправленным содержимым
-            try (CSVParser csvParser = new CSVParser(stringReader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
-                // Проверка заголовков
-                Map<String, Integer> headers = csvParser.getHeaderMap();
-                System.out.println("Headers: " + headers.keySet());
-
-                if (!headers.containsKey("Name") || !headers.containsKey("Email") || !headers.containsKey("Phone Number")) {
-                    throw new IllegalArgumentException("CSV headers are missing or incorrect. Expected headers: Name, Email, Phone Number");
+            for (String[] record : records) {
+                if (record.length < 3) {
+                    throw new IllegalArgumentException("CSV file does not contain the required number of columns");
                 }
 
-                // Итерация по записям CSV
-                for (CSVRecord csvRecord : csvParser) {
-                    String name = csvRecord.get("Name");
-                    String email = csvRecord.get("Email");
-                    String phoneNumber = csvRecord.get("Phone Number");
+                // Extract and trim values from each record
+                String name = record[0].trim();
+                String email = record[1].trim();
+                String phoneNumber = record[2].trim();
 
-                    Recipient recipient = new Recipient();
-                    recipient.setName(name);
-                    recipient.setEmail(email);
-                    recipient.setPhoneNumber(phoneNumber);
-                    addNewRecipient(recipient, userInfo);
+                // Create a new recipient object and set its properties
+                Recipient recipient = new Recipient();
+                recipient.setName(name);
+                recipient.setEmail(email);
+                recipient.setPhoneNumber(phoneNumber);
 
-                    count++;
-                }
+                // Add the new recipient to the system
+                addNewRecipient(recipient, userInfo);
+
+                count++;
             }
 
-        } catch (IOException e) {
-            //TODO REWORK THIS
-            // Логирование ошибки или обработка по необходимости
+        } catch (IOException | CsvException e) {
+            // Handle any errors that occur during file processing
             throw new RuntimeException("Error processing CSV file", e);
         }
 
+        // Return the count of added recipients
         return "Added " + count + " recipients";
     }
-    //TODO Add .csv opportunity
+
+
     private String addNewRecipientFromExcelFile(MultipartFile file, UserInfo userInfo) {
         int count = 0;
 
@@ -192,5 +188,11 @@ public class RecipientService {
             default:
                 return cell.toString();
         }
+    }
+
+    public Recipient getRecipientById(UUID id) {
+        //TODO add handle
+        Recipient recipient = recipientRepository.findById(id).get();
+        return recipient;
     }
 }

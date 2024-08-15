@@ -1,22 +1,16 @@
 package dev.zvaryyka.recipientservice.controller;
 
 import dev.zvaryyka.recipientservice.models.Recipient;
-import dev.zvaryyka.recipientservice.models.UserInfo;
+import dev.zvaryyka.recipientservice.response.UserInfo;
 import dev.zvaryyka.recipientservice.service.RecipientService;
 import dev.zvaryyka.recipientservice.service.UserService;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.authorization.client.util.Http;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -46,6 +40,11 @@ public class RecipientController {
 
         return new ResponseEntity<>(recipientService.getAllRecipientsByUser(userInfo), HttpStatus.OK);
 
+    }
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<Recipient> getRecipientById(@PathVariable UUID id) {
+
+        return new ResponseEntity<>(recipientService.getRecipientById(id), HttpStatus.OK);
     }
     @PostMapping("/add")
     public ResponseEntity<Recipient> addNewRecipient(@RequestBody Recipient recipient) {

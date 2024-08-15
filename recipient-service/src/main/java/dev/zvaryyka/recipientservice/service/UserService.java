@@ -1,6 +1,6 @@
 package dev.zvaryyka.recipientservice.service;
 
-import dev.zvaryyka.recipientservice.models.UserInfo;
+import dev.zvaryyka.recipientservice.response.UserInfo;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;

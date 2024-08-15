@@ -1,4 +1,4 @@
-package dev.zvaryyka.recipientservice.models;
+package dev.zvaryyka.recipientservice.response;
 
 import lombok.*;
 

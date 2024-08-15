@@ -24,16 +24,3 @@ CREATE table devices
             REFERENCES recipients (id)
             ON DELETE CASCADE
 );
-
-create table contacts(
-                         id uuid primary key default uuid_generate_v4(),
-                         recipient_id UUID NOT NULL,
-                         contact_email VARCHAR(255),
-                         contact_phone_number VARCHAR(255),
-                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                         CONSTRAINT fk_recipient_contact
-                             FOREIGN KEY (recipient_id)
-                                 REFERENCES recipients(id)
-                                 ON DELETE CASCADE
-);
