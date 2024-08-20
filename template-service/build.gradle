@@ -29,10 +29,6 @@ ext {
 
 dependencies {
 
-	//for read files
-	implementation 'org.apache.poi:poi:5.2.2'
-	implementation 'org.apache.poi:poi-ooxml:5.2.2'
-	implementation 'com.opencsv:opencsv:5.7.1'
 	// https://mvnrepository.com/artifact/org.keycloak/keycloak-spring-boot-starter
 	implementation 'org.keycloak:keycloak-spring-boot-starter:24.0.5'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'

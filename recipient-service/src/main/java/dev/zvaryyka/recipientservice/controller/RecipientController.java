@@ -28,10 +28,8 @@ public class RecipientController {
     @PostMapping("/addFromFile")
     public String uploadFileWithRecipients(@RequestParam("file") MultipartFile file) {
 
+
         UserInfo userInfo = userService.getUserInfoByToken();
-
-
-
         return recipientService.addNewRecipientFromFile(file,userInfo);
     }
     @GetMapping("/getAll")
