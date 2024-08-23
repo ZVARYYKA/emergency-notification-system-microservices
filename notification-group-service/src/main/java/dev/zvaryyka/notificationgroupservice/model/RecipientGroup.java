@@ -1,5 +1,6 @@
 package dev.zvaryyka.notificationgroupservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "recipient_groups")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RecipientGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

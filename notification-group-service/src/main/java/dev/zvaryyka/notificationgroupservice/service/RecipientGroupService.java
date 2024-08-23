@@ -51,6 +51,7 @@ public class RecipientGroupService { //TODO add handlers
 
         recipientGroup.setName(recipientGroupDTO.getName());
         recipientGroup.setUpdatedAt(Instant.now());
+        recipientGroupRepository.save(recipientGroup);
         return recipientGroup;
 
 
@@ -59,7 +60,8 @@ public class RecipientGroupService { //TODO add handlers
     public RecipientGroup deleteGroup(UUID id, UserInfo userInfo) {
         //TODO add check users
         //TODO add handles
-        RecipientGroup recipientGroup = recipientGroupRepository.getReferenceById(id);
+        RecipientGroup recipientGroup = recipientGroupRepository.findById(id).get();
+
 
         recipientGroupRepository.delete(recipientGroup);
         return recipientGroup;

@@ -1,5 +1,7 @@
 package dev.zvaryyka.notificationgroupservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "recipient_group_members")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RecipientGroupMember {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,9 +26,10 @@ public class RecipientGroupMember {
     private UUID id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "group_id", nullable = false)
+    @JsonIgnore
     private RecipientGroup group;
 
     @NotNull

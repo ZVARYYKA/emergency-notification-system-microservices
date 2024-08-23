@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.Optional;
 import java.util.UUID;
 
-@FeignClient(name = "recipientClient", url = "http://localhost:8080")
+@FeignClient(name = "recipientClient", url = "http://localhost:8765")
 public interface RecipientClient {
 
     @GetMapping("/recipients/getById/{recipientId}")

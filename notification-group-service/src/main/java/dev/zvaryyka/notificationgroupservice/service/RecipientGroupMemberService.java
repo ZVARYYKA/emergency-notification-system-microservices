@@ -3,6 +3,7 @@ package dev.zvaryyka.notificationgroupservice.service;
 
 import dev.zvaryyka.notificationgroupservice.dto.RecipientGroupMemberDTO;
 import dev.zvaryyka.notificationgroupservice.feignclient.RecipientClient;
+import dev.zvaryyka.notificationgroupservice.model.RecipientGroup;
 import dev.zvaryyka.notificationgroupservice.model.RecipientGroupMember;
 import dev.zvaryyka.notificationgroupservice.model.UserInfo;
 import dev.zvaryyka.notificationgroupservice.repository.RecipientGroupMemberRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,16 +63,20 @@ public class RecipientGroupMemberService {
                 recipientGroupService.getOneById(recipientGroupMemberDTO.getGroup_id()));
 
         Optional<RecipientResponse> recipient = recipientClient.getOneById(
-                tokenResponse.getToken(),
+                "Bearer " + tokenResponse.getToken(),
                 recipientGroupMemberDTO.getRecipient_id()
         );
         if (recipient.isEmpty()) {
-            //TODO Handle
-            return null;
+            //TODO add exception
+            throw new IllegalArgumentException("Recipient not found with ID " + recipientGroupMemberDTO.getRecipient_id());
         }
         else {
             recipientGroupMember.setRecipientId(recipient.get().getId());
-        }
+            RecipientGroup group = recipientGroupService.getOneById(recipientGroupMemberDTO.getGroup_id());
+            if (group == null) {
+                throw new IllegalArgumentException("Group with ID " + recipientGroupMemberDTO.getGroup_id() + " not found.");
+            }
+            recipientGroupMember.setGroup(group);        }
         recipientGroupMember.setAddedAt(Instant.now());
 
         return recipientGroupMember;
