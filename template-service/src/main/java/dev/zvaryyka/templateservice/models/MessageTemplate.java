@@ -1,5 +1,6 @@
 package dev.zvaryyka.templateservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,6 +28,7 @@ public class MessageTemplate {
 
     @NotNull
     @Column(name = "keycloak_user_id", nullable = false)
+    @JsonIgnore
     private UUID keycloakUserId;
 
     @Size(max = 255)

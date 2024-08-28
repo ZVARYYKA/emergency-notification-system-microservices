@@ -1,5 +1,6 @@
 package dev.zvaryyka.recipientservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.zvaryyka.recipientservice.request.DeviceDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,7 +34,7 @@ public class Device {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "recipient_id", nullable = false)
-
+    @JsonIgnore
     private Recipient recipient;
 
     @Size(max = 255)

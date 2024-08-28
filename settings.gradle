@@ -2,3 +2,8 @@ rootProject.name = 'emergency-notification-system-microservices'
 
 includeBuild 'eureka-server'
 includeBuild 'api-gateway'
+includeBuild 'notification-group-service'
+includeBuild 'notification-service'
+includeBuild 'template-service'
+includeBuild 'recipient-service'
+includeBuild 'worker-service'

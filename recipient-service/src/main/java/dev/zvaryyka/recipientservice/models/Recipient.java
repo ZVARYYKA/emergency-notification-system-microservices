@@ -1,5 +1,6 @@
 package dev.zvaryyka.recipientservice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,7 +30,7 @@ public class Recipient { //TODO Add Validation
     @Size(max = 255)
     @NotNull
     @Column(name = "keycloak_user_id", nullable = false)
-
+    @JsonIgnore
     private String keycloakUserId;
 
     @Size(max = 255)
