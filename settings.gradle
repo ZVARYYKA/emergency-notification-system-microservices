@@ -7,3 +7,5 @@ includeBuild 'notification-service'
 includeBuild 'template-service'
 includeBuild 'recipient-service'
 includeBuild 'worker-service'
+includeBuild 'rebalancer-service'
+
