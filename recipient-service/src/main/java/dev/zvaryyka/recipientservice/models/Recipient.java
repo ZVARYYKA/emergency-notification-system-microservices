@@ -16,7 +16,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "recipients")
-public class Recipient { //TODO Add Validation
+public class Recipient {
     @Id
     @ColumnDefault("uuid_generate_v4()")
     @Column(name = "id", nullable = false)

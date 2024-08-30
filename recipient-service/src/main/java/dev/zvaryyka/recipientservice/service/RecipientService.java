@@ -91,7 +91,7 @@ public class RecipientService {
             return addNewRecipientFromExcelFile(file, userInfo);
         }
 
-        //TODO REWORK THIS
+
         return "File type not supported";
 
 
@@ -132,7 +132,7 @@ public class RecipientService {
 
         } catch (IOException | CsvException e) {
             // Handle any errors that occur during file processing
-            throw new RuntimeException("Error processing CSV file", e);
+            throw new CustomException("Error processing CSV file",HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Return the count of added recipients
@@ -176,7 +176,7 @@ public class RecipientService {
 
         } catch (IOException e) {
             //TODO Add normally handled exception
-            throw new RuntimeException(e);
+            throw new CustomException("Error processing Excel file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return "Added " + count + " recipients";

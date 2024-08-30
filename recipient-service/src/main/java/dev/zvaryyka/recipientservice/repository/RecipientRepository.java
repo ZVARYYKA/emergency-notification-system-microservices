@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RecipientRepository  extends JpaRepository<Recipient, Long> { //TODO Replace to UUID
+public interface RecipientRepository  extends JpaRepository<Recipient, Long> {
 
     List<Recipient> findByKeycloakUserId(String keycloakUserId);
 
