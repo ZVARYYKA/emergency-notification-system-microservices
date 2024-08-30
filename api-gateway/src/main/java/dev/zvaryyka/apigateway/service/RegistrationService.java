@@ -1,9 +1,8 @@
 package dev.zvaryyka.apigateway.service;
 
 import dev.zvaryyka.apigateway.request.RegisterUserRequest;
+import dev.zvaryyka.apigateway.response.RegistrationResponse;
 import jakarta.ws.rs.core.Response;
-
-
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -11,7 +10,9 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 
 @Service
@@ -22,8 +23,6 @@ public class RegistrationService {
 
     @Value("${keycloak.admin.realm}")
     private String adminRealm;
-
-
 
     @Value("${keycloak.admin.clientId}")
     private String adminClientId;
@@ -37,8 +36,7 @@ public class RegistrationService {
     @Value("${keycloak.adminPassword}")
     private String adminPassword;
 
-    //TODO Add username and mail check
-    //TODO Add exception handling
+
 
     private Keycloak getAdminKeycloakInstance() {
         return KeycloakBuilder.builder()
@@ -52,7 +50,7 @@ public class RegistrationService {
                 .build();
     }
 
-    public Response registerNewUser(RegisterUserRequest userRequest) {
+    public RegistrationResponse registerNewUser(RegisterUserRequest userRequest) {
         Keycloak keycloak = getAdminKeycloakInstance();
 
         UserRepresentation user = new UserRepresentation();
@@ -69,9 +67,16 @@ public class RegistrationService {
         user.setCredentials(Collections.singletonList(credential));
 
         Response response = keycloak.realm(realm).users().create(user);
-        System.out.println(response.getLocation());
+
+        String responseBody;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.readEntity(InputStream.class)))) {
+            responseBody = reader.lines().reduce("", (acc, line) -> acc + line + "\n");
+        } catch (Exception e) {
+            responseBody = "Error reading response body";
+        }
+
         keycloak.close();
 
-        return response;
+        return new RegistrationResponse(response.getStatus(), responseBody);
     }
 }

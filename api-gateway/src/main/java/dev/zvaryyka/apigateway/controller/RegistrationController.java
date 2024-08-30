@@ -1,6 +1,7 @@
 package dev.zvaryyka.apigateway.controller;
 
 import dev.zvaryyka.apigateway.request.RegisterUserRequest;
+import dev.zvaryyka.apigateway.response.RegistrationResponse;
 import dev.zvaryyka.apigateway.service.RegistrationService;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +26,13 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerNewUser(@RequestBody RegisterUserRequest userRequest) {
+        RegistrationResponse registrationResponse = registrationService.registerNewUser(userRequest);
 
-        Response response = registrationService.registerNewUser(userRequest);
-        if (response.getStatus() == 201) {
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("Failed to register user: " + response.getStatusInfo().getReasonPhrase(), HttpStatus.valueOf(response.getStatus()));
-        }
+        HttpStatus httpStatus = HttpStatus.valueOf(registrationResponse.getStatus());
+        String message = registrationResponse.getStatus() == 201 ? "User registered successfully" : "Failed to register user: " + registrationResponse.getBody();
+
+        return new ResponseEntity<>(message, httpStatus);
     }
-
-
 
 
 }
