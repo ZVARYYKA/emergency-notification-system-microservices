@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RecipientGroupDTO { //TODO add validation
+public class RecipientGroupDTO {
 
 
     private String name;

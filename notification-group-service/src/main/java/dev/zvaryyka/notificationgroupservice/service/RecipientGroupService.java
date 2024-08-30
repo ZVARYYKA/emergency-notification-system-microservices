@@ -1,19 +1,21 @@
 package dev.zvaryyka.notificationgroupservice.service;
 
-
 import dev.zvaryyka.notificationgroupservice.dto.RecipientGroupDTO;
+import dev.zvaryyka.notificationgroupservice.exception.CustomException;
 import dev.zvaryyka.notificationgroupservice.model.RecipientGroup;
 import dev.zvaryyka.notificationgroupservice.model.UserInfo;
 import dev.zvaryyka.notificationgroupservice.repository.RecipientGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RecipientGroupService { //TODO add handlers
+public class RecipientGroupService {
 
     private final RecipientGroupRepository recipientGroupRepository;
 
@@ -23,19 +25,26 @@ public class RecipientGroupService { //TODO add handlers
     }
 
     public List<RecipientGroup> getAllByUser(UserInfo userInfo) {
-        return recipientGroupRepository.findAll();
-    }
-    public RecipientGroup getOneById(UUID id) {
-        return recipientGroupRepository.findById(id).orElse(null); //TODO FIX
+        return recipientGroupRepository.findByKeycloakUserId(UUID.fromString(userInfo.getSub()));
     }
 
-    public RecipientGroup addNewGroup(RecipientGroupDTO recipientGroup,UserInfo userInfo) {
+    public RecipientGroup getOneById(UUID id, UserInfo userInfo) {
+        RecipientGroup recipientGroup = recipientGroupRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Recipient Group not found", HttpStatus.NOT_FOUND));
 
-        return recipientGroupRepository.save(toRecipientGroup(recipientGroup,userInfo));
+        if (!recipientGroup.getKeycloakUserId().equals(UUID.fromString(userInfo.getSub()))) {
+            throw new CustomException("You don't have access to this Recipient Group", HttpStatus.FORBIDDEN);
+        }
 
+        return recipientGroup;
     }
-    public RecipientGroup toRecipientGroup(RecipientGroupDTO recipientGroupDTO,UserInfo userInfo) {
 
+    public RecipientGroup addNewGroup(RecipientGroupDTO recipientGroupDTO, UserInfo userInfo) {
+        RecipientGroup recipientGroup = toRecipientGroup(recipientGroupDTO, userInfo);
+        return recipientGroupRepository.save(recipientGroup);
+    }
+
+    public RecipientGroup toRecipientGroup(RecipientGroupDTO recipientGroupDTO, UserInfo userInfo) {
         RecipientGroup recipientGroup = new RecipientGroup();
         recipientGroup.setKeycloakUserId(UUID.fromString(userInfo.getSub()));
         recipientGroup.setName(recipientGroupDTO.getName());
@@ -45,23 +54,25 @@ public class RecipientGroupService { //TODO add handlers
     }
 
     public RecipientGroup updateGroup(UUID id, RecipientGroupDTO recipientGroupDTO, UserInfo userInfo) {
-        //TODO add check users
-        //TODO add handles
-        RecipientGroup recipientGroup = recipientGroupRepository.getReferenceById(id);
+        RecipientGroup recipientGroup = recipientGroupRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Recipient Group not found", HttpStatus.NOT_FOUND));
+
+        if (!recipientGroup.getKeycloakUserId().equals(UUID.fromString(userInfo.getSub()))) {
+            throw new CustomException("You don't have access to this Recipient Group", HttpStatus.FORBIDDEN);
+        }
 
         recipientGroup.setName(recipientGroupDTO.getName());
         recipientGroup.setUpdatedAt(Instant.now());
-        recipientGroupRepository.save(recipientGroup);
-        return recipientGroup;
-
-
+        return recipientGroupRepository.save(recipientGroup);
     }
 
     public RecipientGroup deleteGroup(UUID id, UserInfo userInfo) {
-        //TODO add check users
-        //TODO add handles
-        RecipientGroup recipientGroup = recipientGroupRepository.findById(id).get();
+        RecipientGroup recipientGroup = recipientGroupRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Recipient Group not found", HttpStatus.NOT_FOUND));
 
+        if (!recipientGroup.getKeycloakUserId().equals(UUID.fromString(userInfo.getSub()))) {
+            throw new CustomException("You don't have access to this Recipient Group", HttpStatus.FORBIDDEN);
+        }
 
         recipientGroupRepository.delete(recipientGroup);
         return recipientGroup;

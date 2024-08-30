@@ -33,7 +33,8 @@ public class RecipientGroupController {
     }
     @GetMapping("/getOneById/{id}")
     public ResponseEntity<RecipientGroup> getOneById(@PathVariable UUID id) {
-        return ResponseEntity.ok(recipientGroupService.getOneById(id));
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return ResponseEntity.ok(recipientGroupService.getOneById(id,userInfo));
     }
     @PostMapping("/add")
     public ResponseEntity<RecipientGroup> addNewGroup(@RequestBody RecipientGroupDTO recipientGroup) {

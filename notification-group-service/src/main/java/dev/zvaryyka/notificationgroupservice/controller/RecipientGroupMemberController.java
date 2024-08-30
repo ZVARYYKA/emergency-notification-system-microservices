@@ -39,7 +39,8 @@ public class RecipientGroupMemberController {
 
     @GetMapping("/getOneById/{id}")
     public ResponseEntity<RecipientGroupMember> getById(@PathVariable("id") UUID uuid) {
-        return new ResponseEntity<>(recipientGroupMemberService.getOneById(uuid),HttpStatus.OK);
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return new ResponseEntity<>(recipientGroupMemberService.getOneById(uuid,userInfo),HttpStatus.OK);
     }
 
     @PostMapping("/add")
@@ -60,7 +61,8 @@ public class RecipientGroupMemberController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<RecipientGroupMember> deleteMember(@PathVariable UUID id) {
-        return new ResponseEntity<>(recipientGroupMemberService.deleteMember(id),HttpStatus.OK);
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return new ResponseEntity<>(recipientGroupMemberService.deleteMember(id,userInfo),HttpStatus.OK);
     }
 
 
