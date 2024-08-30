@@ -3,26 +3,24 @@ package dev.zvaryyka.recipientservice.service;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
+import dev.zvaryyka.recipientservice.exception.CustomException;
 import dev.zvaryyka.recipientservice.models.Recipient;
 import dev.zvaryyka.recipientservice.response.UserInfo;
 import dev.zvaryyka.recipientservice.repository.RecipientRepository;
-import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RecipientService {
@@ -40,26 +38,45 @@ public class RecipientService {
     }
 
     public Recipient addNewRecipient(Recipient recipient, UserInfo userInfo) {
-
-        recipient.setKeycloakUserId(userInfo.getSub());
-        recipient.setCreatedAt(Instant.now());
-        recipient.setUpdatedAt(Instant.now());
-        return recipientRepository.save(recipient);
+        try {
+            recipient.setKeycloakUserId(userInfo.getSub());
+            recipient.setCreatedAt(Instant.now());
+            recipient.setUpdatedAt(Instant.now());
+            return recipientRepository.save(recipient);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException("Duplicate entry: " + e.getMostSpecificCause().getMessage(), HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            throw new CustomException("An error occurred while adding the recipient", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Recipient updateRecipient(UUID id, Recipient recipient) {
-        Recipient changedRecipient = recipientRepository.findById(id).get();
-
-        changedRecipient.setName(recipient.getName());
-        changedRecipient.setEmail(recipient.getEmail());
-        changedRecipient.setPhoneNumber(recipient.getPhoneNumber());
-        changedRecipient.setUpdatedAt(Instant.now());
-        return recipientRepository.save(changedRecipient);
+    public Recipient updateRecipient(UUID id, Recipient recipient, UserInfo userInfo) {
+        Optional<Recipient> existingRecipientOpt = recipientRepository.findById(id);
+        if (existingRecipientOpt.isEmpty()) {
+            throw new CustomException("Recipient not found", HttpStatus.NOT_FOUND);
+        }
+        Recipient existingRecipient = existingRecipientOpt.get();
+        if(Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
+            throw new CustomException("You don't have access to this recipient", HttpStatus.NOT_FOUND);
+        }
+        existingRecipient.setName(recipient.getName());
+        existingRecipient.setEmail(recipient.getEmail());
+        existingRecipient.setPhoneNumber(recipient.getPhoneNumber());
+        existingRecipient.setUpdatedAt(Instant.now());
+        return recipientRepository.save(existingRecipient);
     }
 
-    public Recipient deleteRecipient(UUID id) {
+    public Recipient deleteRecipient(UUID id,UserInfo userInfo) {
+        Optional<Recipient> existingRecipientOpt = recipientRepository.findById(id);
+        if (existingRecipientOpt.isEmpty()) {
+            throw new CustomException("Recipient not found", HttpStatus.NOT_FOUND);
+        }
 
-        Recipient recipient = recipientRepository.findById(id).get();
+        Recipient recipient = existingRecipientOpt.get();
+
+        if(Objects.equals(recipient.getKeycloakUserId(), userInfo.getSub())) {
+            throw new CustomException("You don't have access to this recipient", HttpStatus.NOT_FOUND);
+        }
         recipientRepository.delete(recipient);
         return recipient;
     }
@@ -190,10 +207,16 @@ public class RecipientService {
         }
     }
 
-    public Recipient getRecipientById(UUID id) {
-        //TODO add handle
-        Recipient recipient = recipientRepository.findById(id).get();
-        return recipient;
+    public Recipient getRecipientById(UUID id,UserInfo userInfo) {
+        Optional<Recipient> existingRecipientOpt = recipientRepository.findById(id);
+        if (existingRecipientOpt.isEmpty()) {
+            throw new CustomException("Recipient not found", HttpStatus.NOT_FOUND);
+        }
+        Recipient existingRecipient = existingRecipientOpt.get();
+        if(Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
+            throw new CustomException("You don't have access to this recipient", HttpStatus.NOT_FOUND);
+        }
+        return existingRecipient;
     }
 
 }

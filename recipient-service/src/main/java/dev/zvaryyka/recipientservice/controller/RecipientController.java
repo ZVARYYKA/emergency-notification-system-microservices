@@ -42,7 +42,8 @@ public class RecipientController {
     @GetMapping("/getById/{id}")
     public ResponseEntity<Recipient> getRecipientById(@PathVariable UUID id) {
 
-        return new ResponseEntity<>(recipientService.getRecipientById(id), HttpStatus.OK);
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return new ResponseEntity<>(recipientService.getRecipientById(id,userInfo), HttpStatus.OK);
     }
     @PostMapping("/add")
     public ResponseEntity<Recipient> addNewRecipient(@RequestBody Recipient recipient) {
@@ -50,16 +51,16 @@ public class RecipientController {
         UserInfo userInfo = userService.getUserInfoByToken();
         return new ResponseEntity<>(recipientService.addNewRecipient(recipient, userInfo), HttpStatus.CREATED);
     }
-    //TODO Add check what request do need user
     @PutMapping("/update/{id}")
     public ResponseEntity<Recipient> updateRecipient(@PathVariable UUID id, @RequestBody Recipient recipient) {
 
-        return new ResponseEntity<>(recipientService.updateRecipient(id, recipient), HttpStatus.OK);
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return new ResponseEntity<>(recipientService.updateRecipient(id, recipient,userInfo), HttpStatus.OK);
     }
-    //TODO Add check what request do need user
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Recipient> deleteRecipient(@PathVariable UUID id) {
-        return new ResponseEntity<>(recipientService.deleteRecipient(id), HttpStatus.OK);
+        UserInfo userInfo = userService.getUserInfoByToken();
+        return new ResponseEntity<>(recipientService.deleteRecipient(id,userInfo), HttpStatus.OK);
     }
 
 }
