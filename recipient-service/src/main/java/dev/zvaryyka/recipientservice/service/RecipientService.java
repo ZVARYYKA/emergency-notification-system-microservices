@@ -56,7 +56,7 @@ public class RecipientService {
             throw new CustomException("Recipient not found", HttpStatus.NOT_FOUND);
         }
         Recipient existingRecipient = existingRecipientOpt.get();
-        if(Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
+        if(!Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
             throw new CustomException("You don't have access to this recipient", HttpStatus.NOT_FOUND);
         }
         existingRecipient.setName(recipient.getName());
@@ -212,7 +212,7 @@ public class RecipientService {
             throw new CustomException("Recipient not found", HttpStatus.NOT_FOUND);
         }
         Recipient existingRecipient = existingRecipientOpt.get();
-        if(Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
+        if(!Objects.equals(existingRecipient.getKeycloakUserId(), userInfo.getSub())) {
             throw new CustomException("You don't have access to this recipient", HttpStatus.NOT_FOUND);
         }
         return existingRecipient;

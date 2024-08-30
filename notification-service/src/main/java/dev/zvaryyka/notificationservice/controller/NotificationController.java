@@ -29,7 +29,7 @@ public class NotificationController {
 
         UserInfo userInfo = userService.getUserInfoByToken();
         TokenResponse token = userService.getUserToken();
-
+        System.out.println(userInfo.getSub());
         return new ResponseEntity<>(notificationService.sendMessagesToGroupRecipients(notificationRequest,userInfo,token), HttpStatus.OK);
 
 

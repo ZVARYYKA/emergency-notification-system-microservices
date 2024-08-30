@@ -14,7 +14,7 @@ public class RecipientResponse {
     private UUID id;
 
 
-    private String keycloakUserId; //TODO
+    private String keycloakUserId;
 
 
     private String name;

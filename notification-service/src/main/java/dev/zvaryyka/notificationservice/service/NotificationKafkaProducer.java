@@ -24,7 +24,7 @@ public class NotificationKafkaProducer {
         this.smsKafkaTemplate = smsKafkaTemplate;
     }
 
-    public void sendDeviceNotification(DeviceNotificationDTO notification) { //TODO
+    public void sendDeviceNotification(DeviceNotificationDTO notification) {
         try {
             deviceKafkaTemplate.send("device-notifications", notification);
         } catch (Exception e) {
@@ -32,7 +32,7 @@ public class NotificationKafkaProducer {
         }
     }
 
-    public void sendEmailNotification(EmailNotificationDTO notification) { //TODO
+    public void sendEmailNotification(EmailNotificationDTO notification) {
         try {
             emailKafkaTemplate.send("email-notifications", notification);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class NotificationKafkaProducer {
         }
     }
 
-    public void sendSmsNotification(SmsNotificationDTO notification) { //TODO
+    public void sendSmsNotification(SmsNotificationDTO notification) {
         try {
             smsKafkaTemplate.send("sms-notifications", notification);
         } catch (Exception e) {

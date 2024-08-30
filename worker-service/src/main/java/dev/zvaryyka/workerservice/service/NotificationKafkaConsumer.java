@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationKafkaConsumer {
 
-    private final ObjectMapper objectMapper = new ObjectMapper(); //TODO
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final SendToAndroidService sendToAndroidService;
     private final SendToIPhoneService sendToIPhoneService;

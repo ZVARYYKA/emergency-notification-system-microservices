@@ -1,6 +1,6 @@
-package dev.zvaryyka.notificationgroupservice.handler;
+package dev.zvaryyka.notificationservice.handler;
 
-import dev.zvaryyka.notificationgroupservice.exception.CustomException;
+import dev.zvaryyka.notificationservice.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
