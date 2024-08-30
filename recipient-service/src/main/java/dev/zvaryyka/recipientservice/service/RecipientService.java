@@ -175,7 +175,6 @@ public class RecipientService {
             }
 
         } catch (IOException e) {
-            //TODO Add normally handled exception
             throw new CustomException("Error processing Excel file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
