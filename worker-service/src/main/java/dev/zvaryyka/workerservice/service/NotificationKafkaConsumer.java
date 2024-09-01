@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zvaryyka.workerservice.dto.DeviceNotificationDTO;
 import dev.zvaryyka.workerservice.dto.EmailNotificationDTO;
 import dev.zvaryyka.workerservice.dto.SmsNotificationDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class NotificationKafkaConsumer {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -31,7 +33,7 @@ public class NotificationKafkaConsumer {
     public void consumeEmailNotification(String message) {
         try {
             EmailNotificationDTO dto = objectMapper.readValue(message, EmailNotificationDTO.class);
-            System.out.println("Received Email Notification: " + dto);
+            log.info("Received Email Notification: {}", dto);
            sendToMailService.sendToMail(dto);
         } catch (Exception e) {
             e.printStackTrace(); // Логирование ошибки десериализации
@@ -42,7 +44,7 @@ public class NotificationKafkaConsumer {
     public void consumeDeviceNotification(String message) {
         try {
             DeviceNotificationDTO dto = objectMapper.readValue(message, DeviceNotificationDTO.class);
-            System.out.println("Received Device Notification: " + dto);
+            log.info("Received Device Notification: {}", dto);
             if (dto.getDeviceType().equals("Android")) {
                 sendToAndroidService.sendToAndroid(dto);
             }
@@ -58,7 +60,7 @@ public class NotificationKafkaConsumer {
     public void consumeSmsNotification(String message) {
         try {
             SmsNotificationDTO dto = objectMapper.readValue(message, SmsNotificationDTO.class);
-            System.out.println("Received SMS Notification: " + dto);
+            log.info("Received SMS Notification: {}", dto);
             sendToPhoneNumberService.sendToPhoneNumber(dto);
         } catch (Exception e) {
             e.printStackTrace(); // Логирование ошибки десериализации
